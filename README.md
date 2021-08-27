@@ -1,4 +1,4 @@
-# ArrayLIst_example<br />
+# ArrayList_example<br />
 **Created Date:** 2/16/2011<br />
 **Last Updated:** 2/16/2011<br />
 **Description:** This example shows how to extend the Synergex.SynergyDE.Collections.ArrayList class, box and unbox an alpha so that it can be stored in an ArrayList, and how to create a sorted ArrayList.<br />
