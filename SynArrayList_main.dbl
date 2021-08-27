@@ -1,0 +1,55 @@
+import SynPSG.Collections
+
+main
+record
+    a1  ,@SynPSG.Collections.SynAlphaArrayList
+    a2  ,@a
+endrecord
+proc
+    open(1,O,'TT:')
+
+    a1 = new @SynPSG.Collections.SynAlphaArrayList()
+
+    a1.add('C')
+    a1.add('E')
+    a1.add('G')
+    a1.add('F')
+    a1.add('D')
+    a1.add('B')
+    a1.add('H')
+    a1.add('A')
+    a1.add('I')
+
+    writes(1, "a1 unsorted list")
+    foreach a2 in a1
+        display(1, (a)a2, '  ')
+    forms(1, 1)
+
+    a1.sort()
+
+    writes(1, "a1.sort()")
+    foreach a2 in a1
+        display(1, (a)a2, '  ')
+    forms(1, 1)
+
+    a1.reverse()
+
+    writes(1, "a1.reverse()")
+    foreach a2 in a1
+        display(1, (a)a2, '  ')
+    forms(1, 1)
+
+    SynArrayListBubbleSort(a1)
+    writes(1, "SynArrayListBubbleSort(a1)")
+    foreach a2 in a1
+        display(1, (a)a2, '  ')
+    forms(1, 1)
+
+    close 1
+
+.ifdef DBLNET
+    StopMessage()
+.endc ;DBLNET
+    stop D_EXIT_SUCCESS
+endmain
+

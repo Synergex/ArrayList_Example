@@ -1,0 +1,133 @@
+import Synergex.SynergyDE.Collections
+
+namespace SynPSG.Collections
+
+    class SynAlphaArrayList extends Synergex.SynergyDE.Collections.ArrayList
+
+        public method AddSorted   ,void
+            req in value    ,a
+            endparams
+            record
+                ctr         ,i4
+            endrecord
+        proc
+            for ctr from 1 thru parent.Count
+            begin
+                if((a)parent[ctr] > value)
+                begin
+                    ;; insert into middle of ArrayList
+                    parent.Insert(ctr, (@a)value)
+                    mreturn
+                end
+            end
+            ;; add to end of ArrayList
+            parent.Add((@a)value)
+            mreturn
+        endmethod
+
+        public method Add   ,void
+            req in value    ,a
+            endparams
+        proc
+            parent.Add((@a)value)
+            mreturn
+        endmethod
+
+        public method Remove    ,void
+            req in value        ,a
+            endparams
+            record
+                index           ,i4
+            endrecord
+        proc
+            index = parent.IndexOf((@a)value)
+            if(index > 0)
+                parent.RemoveAt(index)
+            mreturn
+        endmethod
+
+        public method Item      ,a
+            required in index   ,n
+        proc
+            mreturn (a)parent[index]
+        endmethod
+
+        public property Indexer ,a
+            req in index        ,n
+            endparams
+        method get
+        proc
+            mreturn (a)parent.indexer(index)
+        endmethod
+        endproperty
+
+        public method IndexOf   ,i
+            req in value        ,a
+            endparams
+        proc
+            mreturn parent.IndexOf((@a)value)
+        endmethod
+
+        public method LastIndexOf   ,i
+            req in value            ,a
+            endparams
+        proc
+            mreturn parent.LastIndexOf((@a)value)
+        endmethod
+
+        public method Sort      ,void
+            endparams
+            record
+                tempObj     ,@a         ;temp object for swap
+                maxArray    ,i4         ;size of arraylist
+                ctr1        ,i4         ;loop counter
+                ctr2        ,i4         ;loop counter
+            endrecord
+        proc
+            maxArray = parent.Count
+            if(maxArray < 2)
+                mreturn
+            for ctr1 from 1 thru maxArray
+            begin
+                for ctr2 from maxArray thru ctr1+1 by -1
+                begin
+                    if((a)parent[ctr2-1] > (a)parent[ctr2])
+                    begin
+                        tempObj = parent[ctr2]
+                        parent[ctr2] = parent[ctr2-1]
+                        parent[ctr2-1] = tempObj
+                    end
+                end
+            end
+        endmethod
+
+        public method Reverse   ,void
+            endparams
+            record
+                tempObj     ,@a         ;temp object for swap
+                maxArray    ,i4         ;size of arraylist
+                ctr1        ,i4         ;loop counter
+                ctr2        ,i4         ;loop counter
+            endrecord
+        proc
+            maxArray = parent.Count
+            if(maxArray < 2)
+                mreturn
+            for ctr1 from 1 thru maxArray
+            begin
+                for ctr2 from maxArray thru ctr1+1 by -1
+                begin
+                    if((a)parent[ctr2-1] < (a)parent[ctr2])
+                    begin
+                        tempObj = parent[ctr2]
+                        parent[ctr2] = parent[ctr2-1]
+                        parent[ctr2-1] = tempObj
+                    end
+                end
+            end
+        endmethod
+
+    endclass
+
+endnamespace
+

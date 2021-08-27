@@ -1,0 +1,120 @@
+import Synergex.SynergyDE.Collections
+
+subroutine SynArrayListBubbleSort
+    req inout parent    ,@ArrayList     ;arraylist to sort
+    opt in aReverseSort ,boolean        ;sort in reverse order?
+    endparams
+
+    record
+        reverseSort ,boolean            ;reverse sort required
+        maxArray    ,i4                 ;size of arraylist
+        ctr         ,i4                 ;loop counter
+        ctr2        ,i4                 ;loop counter
+        tempObj     ,@a                 ;temp object for swap
+    endrecord
+proc
+    maxArray = parent.Count
+    if(maxArray < 2)
+        xreturn
+    if(^passed(aReverseSort) && aReverseSort != false) then
+        reverseSort = true
+    else
+        reverseSort = false
+
+    if(ReverseSort == true) then
+    begin
+        for ctr from 1 thru maxArray
+        begin
+            for ctr2 from maxArray thru ctr+1 by -1
+            begin
+                if((a)parent[ctr2-1] < (a)parent[ctr2])
+                begin
+                    ;swap
+                    tempObj = parent[ctr2]
+                    parent[ctr2] = parent[ctr2-1]
+                    parent[ctr2-1] = tempObj
+                end
+            end
+        end
+    end
+    else
+    begin
+        for ctr from 1 thru maxArray
+        begin
+            for ctr2 from maxArray thru ctr+1 by -1
+            begin
+                if((a)parent[ctr2-1] > (a)parent[ctr2])
+                begin
+                    ;swap
+                    tempObj = parent[ctr2]
+                    parent[ctr2] = parent[ctr2-1]
+                    parent[ctr2-1] = tempObj
+                end
+            end
+        end
+    end
+    xreturn
+endsubroutine
+
+subroutine SynArrayListMemorySort
+    req inout parent    ,@ArrayList     ;arraylist to sort
+    opt in aReverseSort ,boolean        ;sort in reverse order?
+    endparams
+
+    structure b
+                    ,a1
+    endstructure
+    record
+        reverseSort ,boolean            ;reverse sort required
+        maxArray    ,i4                 ;size of arraylist
+        ctr         ,i4                 ;loop counter
+        hdl         ,D_HANDLE           ;sortable memory segment
+        maxLen      ,i4                 ;size of largest element in arrayList
+        currLen     ,i4                 ;size of current element in arrayList
+        startPos    ,i4                 ;start position in memory structure
+    endrecord
+proc
+    maxArray = parent.Count
+    if(maxArray < 2)
+        xreturn
+    if(^passed(aReverseSort) && aReverseSort != false) then
+        reverseSort = true
+    else
+        reverseSort = false
+
+    ;; find the maximum length of arraylist entry, so we can create memory segment
+    maxLen = 0
+    for ctr from 1 thru maxArray
+    begin
+        currLen = ^size((a)parent[ctr])
+        if(currLen > maxLen)
+            maxLen = currLen
+    end
+
+    ;; create memory segment from ArrayList
+    hdl = %mem_proc(DM_ALLOC, maxArray*maxLen)
+    startPos = 1
+    for ctr from 1 thru maxArray
+    begin
+        ^m(b(startPos:maxLen),hdl) = (a)parent[ctr]
+        startPos += maxLen
+    end
+
+    ;; sort memory segment
+    qsort(^m(b(1,maxLen),hdl), maxArray)
+
+    ;; clear ArrayList and reload data in sorted order
+    parent.Clear()
+    startPos = 1
+    for ctr from 1 thru maxArray
+    begin
+        if(reverseSort == true) then
+            parent.Insert(1, (@a)^m(b(startPos:maxLen),hdl))
+        else
+            parent.Add((@a)^m(b(startPos:maxLen),hdl))
+        startPos += maxLen
+    end
+
+    hdl = %mem_proc(DM_FREE, hdl)
+    xreturn
+endsubroutine
